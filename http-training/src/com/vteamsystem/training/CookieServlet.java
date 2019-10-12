@@ -1,0 +1,60 @@
+package com.vteamsystem.training;
+
+import java.io.IOException;
+
+import javax.servlet.ServletException;
+import javax.servlet.ServletOutputStream;
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+/**
+ * HelloServlet 只提供 GET 方法.
+ * @author harrison.yuan
+ *
+ */
+public class CookieServlet extends HttpServlet {
+	
+	private static final long serialVersionUID = -1741316713458491781L;
+
+	/**
+     * Default constructor. 
+     */
+    public CookieServlet() {
+    }
+
+	/**
+	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
+	 */
+	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		response.setContentType("text/html;charset=UTF-8");
+		ServletOutputStream sos = null;
+		try {
+			sos = response.getOutputStream();
+			
+			if (null == request.getCookies()) {
+				Cookie cookie = new Cookie("sessionid", request.getSession().getId());
+				cookie.setPath(request.getContextPath());
+//				cookie.setMaxAge(60 * 60 * 24);
+				cookie.setHttpOnly(true);
+				cookie.setSecure(false);
+				response.addCookie(cookie);
+				
+				sos.write("no Cookie.".getBytes());
+			} else {
+				sos.write("Cooie is exists.".getBytes("UTF-8"));
+			}
+		} finally {
+			try {
+				if (null != sos) {
+					sos.close();
+				}
+			} catch (Throwable t) {
+				t.printStackTrace();
+			}
+			
+		}
+	}
+
+}
